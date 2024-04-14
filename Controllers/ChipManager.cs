@@ -25,31 +25,31 @@ namespace joseChipsConsole.Controllers
 
                 if (diffRight == 0 && diffLeft > 0)
                 {
-                    moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n);
+                    moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n,true);
                     continue;
                 }
 
                 if (diffLeft == 0 && diffRight > 0)
                 {
-                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n);
+                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n,false);
                     continue;
                 }
 
                 if (diffRight < diffLeft)
                 {
-                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n);
+                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n,false);
                     continue;
                 }
 
                 if (diffLeft < diffRight)
                 {
-                    moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n);
+                    moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n,true);
                     continue;
                 }
 
                 if (diffRight == diffLeft && diffRight > 0 && diffLeft > 0)
                 {
-                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n);
+                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n,false);
                     continue;
                 }
             }
@@ -80,20 +80,28 @@ namespace joseChipsConsole.Controllers
             return diff;
         }
 
-        private int CalculateMovesForCondition(int[] newChips, int currentIndex, int diff, int target, int n)
+        private int CalculateMovesForCondition(int[] newChips, int currentIndex, int diff, int target, int n,bool isSide)
         {
-            var l = (currentIndex - diff) % n;
+            int l = 0;
+
+            if (isSide) {
+                l = (currentIndex - diff) % n;
+            } else {
+                l = (currentIndex + diff) % n;
+            }
+
             var diffValue = MoveChips(newChips, currentIndex, l, target);
             var moveCalculator = new MoveCalculatorModel(diffValue, diff, newChips, currentIndex, l);
             return moveCalculator.CalculateMoves();
         }
+       
         private int MoveChips(int[] chips, int currentIndex, int targetIndex, int targetValue)
         {
             var n = chips.Length;
             currentIndex = (currentIndex + n) % n;
             targetIndex = (targetIndex + n) % n;
 
-            var diff = Math.Min(Math.Abs(chips[currentIndex] - targetValue), Math.Abs(chips[targetIndex] - targetValue));
+            var diff = Math.Min(Math.Abs(chips[currentIndex] - targetValue), Math.Abs(targetValue -chips[targetIndex]));
             chips[targetIndex] += diff;
             chips[currentIndex] -= diff;
             return diff;
