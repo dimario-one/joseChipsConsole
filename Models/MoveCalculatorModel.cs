@@ -18,12 +18,12 @@ namespace joseChipsConsole.Models
             StartIndex = startIndex;
             TargetIndex = targetIndex;
         }
-        public int CalculateMoves()
+        public int CalculateMoves(int[] chips)
         {
-            int minMoves = CalculateMinMoves();
+            int minMoves = CalculateMinMoves(chips);
             return Diff * Math.Min(DiffValue, minMoves);
         }
-        private int CalculateMinMoves()
+        private int CalculateMinMoves(int[] chips)
         {
             int n = Chips.Length;
             int clockwiseMoves = Math.Abs(TargetIndex - StartIndex);
