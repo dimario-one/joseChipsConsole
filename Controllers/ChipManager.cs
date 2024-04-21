@@ -4,7 +4,33 @@ namespace joseChipsConsole.Controllers
 {
     public class ChipManager
     {
-        public int MinChipMoves(int[] chips, int sumMoves = 0)
+        public int CalculateChips(int[] chips)
+        {
+            List<int> indexes = new List<int>();
+            List<int> moves = new List<int>();
+
+            double average = chips.Average();
+
+            for (int i = 0; i < chips.Length; i++)
+            {
+                if (chips[i] > average)
+                {
+                    indexes.Add(i);
+                }
+            }
+
+            if (indexes.Count > 0)
+            {
+                foreach (int index in indexes)
+                {
+                    var currentMoves = MinChipMoves(chips, index, 0);
+                    moves.Add(currentMoves);
+                }
+            }
+
+            return moves.Min();
+        }
+        public int MinChipMoves(int[] chips, int index, int sumMoves)
         {
             var totalChips = CalculateTotalChips(chips);
             var n = chips.Length;
@@ -17,45 +43,41 @@ namespace joseChipsConsole.Controllers
             if (newChips.All(chip => chip == target)) return sumMoves;
 
             var moves = sumMoves;
-            for (int i = 0; i < n; i++)
+            for (int i = index; i < index + n; i++)
             {
                 if (newChips[i] <= target) continue;
+
                 var diffLeft = CalculateDiff(newChips, i, target, true);
                 var diffRight = CalculateDiff(newChips, i, target, false);
 
-                if (diffRight == 0 && diffLeft > 0)
-                {
-                    moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n, true);
-                    break; 
-                }
-
-                if (diffLeft == 0 && diffRight > 0)
-                {
-                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n, false);
+                    bool moveLeft = IsLeftBetterMove(newChips, i);
+                    if (moveLeft)
+                    {
+                        moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n, true);
+                    break;
+                    }
+                    else
+                    {
+                        moves += CalculateMovesForCondition(newChips, i, diffRight, target, n, false);
                     break;
                 }
-
-                if (diffRight < diffLeft)
-                {
-                    moves += CalculateMovesForCondition(newChips, i, diffRight, target, n, false);
-                    break;
-                }
-
-                if (diffLeft < diffRight)
-                {
-                    moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n, true);
-                    break;
-                }
-
-                if (diffRight == diffLeft && diffRight > 0 && diffLeft > 0)
-                {
-                    moves += CalculateMovesForCondition(newChips, i, diffLeft, target, n, true);
-                    break;
-                }
-        
             }
-            return MinChipMoves(newChips, moves);
+            return MinChipMoves(newChips,0, moves);
         }
+        private bool IsLeftBetterMove(int[] chips, int currentIndex)
+        {
+            int n = chips.Length;
+            int leftSum = 0, rightSum = 0;
+
+            for (int i = 1; i <= n / 2; i++)
+            {
+                leftSum += chips[(currentIndex - i + n) % n];
+                rightSum += chips[(currentIndex + i) % n];
+            }
+
+            return leftSum < rightSum;
+        }
+
         private int CalculateTotalChips(int[] chips)
         {
             return chips.Sum();

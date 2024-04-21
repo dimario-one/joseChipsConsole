@@ -16,11 +16,11 @@ namespace ConsoleApp
             int[] chips4 = { 0, 10, 0, 8, 3, 10, 7, 0, 9, 3 };
      
 
-            var moves0 = chipManager.MinChipMoves(chips0, 0);
-            var moves1 = chipManager.MinChipMoves(chips1, 0);
-            var moves2 = chipManager.MinChipMoves(chips2, 0);
-            var moves3 = chipManager.MinChipMoves(chips3, 0);
-            var moves4 = chipManager.MinChipMoves(chips4, 0);
+            var moves0 = chipManager.CalculateChips(chips0);
+            var moves1 = chipManager.CalculateChips(chips1);
+            var moves2 = chipManager.CalculateChips(chips2);
+            var moves3 = chipManager.CalculateChips(chips3);
+            var moves4 = chipManager.CalculateChips(chips4);
 
 
             Console.WriteLine($"Moves 0: {moves0}");
